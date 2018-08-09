@@ -1,5 +1,9 @@
 # dgen: Docker configuration generator
 
+TODO:
+-[] Add command to generate Dockerfile (dgen new)
+-[] 
+
 
 Usage:
 ```bash
@@ -7,3 +11,4 @@ Usage:
   $ cd docker-generator
   $ pip install --editable .
   $ dgen --help
+```
