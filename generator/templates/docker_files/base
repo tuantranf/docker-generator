@@ -1,0 +1,12 @@
+MAINTAINER {{ maintainer }}
+
+{% block from %}{% endblock %}
+
+{% block package %}{% endblock %}
+
+{% block copy %}{% endblock %}
+
+{% block command %}{% endblock %}}
+
+{% block setup %}{% endblock %}
+

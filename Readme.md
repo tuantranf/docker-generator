@@ -1,9 +1,13 @@
 # dgen: Docker configuration generator
 
-TODO:
--[] Add command to generate Dockerfile (dgen new)
--[] 
+## Python version
 
+```bash
+$ python3 -m venv env
+$ source env/bin/activate
+$ python --version
+$ pip install -r requirements.txt
+```
 
 Usage:
 ```bash

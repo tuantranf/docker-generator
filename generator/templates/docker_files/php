@@ -1,0 +1,24 @@
+{% extends "base" %}
+
+{% block from %}
+FROM {{ image }}
+{% endblock %}
+
+{% block package %}
+RUN apt-get -y update
+{% if packages|length > 0 %}
+RUN apt-get -y install {{ packages|join(' ') }}
+{% endif %}
+{% endblock %}
+
+{% for copy in copies %}
+COPY {{ copy.from }} {{ copy.to }}
+{% endfor %}
+
+WORKDIR {{ path }} {{ container }}
+
+# application setup
+{% block setup %}
+{% endblock %}
+
+EXPOSE {{ port }}
