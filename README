@@ -1,0 +1,9 @@
+# dgen: Docker configuration generator
+
+
+Usage:
+```bash
+  $ git clone [REPOSITORY_URL]
+  $ cd docker-generator
+  $ pip install --editable .
+  $ dgen --help
