@@ -1,4 +1,3 @@
-import os
 import sys
 import click
 
@@ -6,7 +5,6 @@ class Context(object):
 
     def __init__(self):
         self.verbose = False
-        self.home = os.getcwd()
 
     def log(self, msg, *args):
         """Logs a message to stderr."""
@@ -18,3 +16,5 @@ class Context(object):
         """Logs a message to stderr only if verbose is enabled."""
         if self.verbose:
             self.log(msg, *args)
+
+pass_context = click.make_pass_decorator(Context, ensure=True)

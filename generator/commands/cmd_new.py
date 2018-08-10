@@ -1,8 +1,8 @@
 import os
 import click
 
-from generator.cli import pass_context
-from generator.file import generate_file
+from generator.context import pass_context
+from generator.file import generate_docker_file
 
 @click.command('new', short_help='Generate new docker setup.')
 @click.option('--dryrun', required=False, default=False, type=bool)
@@ -33,6 +33,7 @@ from generator.file import generate_file
               help='PHP version'
               )
 @click.argument('path', required=False, default=".", type=click.Path(resolve_path=True))
+
 @pass_context
 def cli(
         ctx,
@@ -58,6 +59,6 @@ def cli(
 
     language = language.lower();
     if language == 'php':
-        generate_file(path, name, language, version)
+        generate_docker_file(path, name, language, version)
     click.echo('Create ./Dockerfile')
 
