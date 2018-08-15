@@ -1,64 +1,38 @@
 import os
 import click
+from yaml import load, dump
 
 from generator.context import pass_context
-from generator.file import generate_docker_file
+from generator.file import generate_docker_file_php
 
 @click.command('new', short_help='Generate new docker setup.')
-@click.option('--dryrun', required=False, default=False, type=bool)
-@click.option('--name',
-              prompt='Project\'s name',
-              default="sample",
-              help='Project\'s name')
-@click.option('--maintainer',
-              prompt='The maintainer\'s name',
-              default=lambda: os.environ.get('USER', ''),
-              help='The maintainer\'s name'
-              )
-@click.option('--email',
-              prompt='The developer\'s email address',
-              default="test@test.com",
-              help='The developer\'s email address'
-              )
-# TODO show a select list here
-@click.option('--language',
-              prompt='Programming language',
-              default="PHP",
-              help='Programming language'
-              )
-# TODO using dynamic options here @see https://github.com/pallets/click/issues/72
-@click.option('--version',
-              prompt='PHP version',
-              default="5.6",
-              help='PHP version'
-              )
+@click.option('--config', type=click.File('r'))
 @click.argument('path', required=False, default=".", type=click.Path(resolve_path=True))
 
 @pass_context
 def cli(
         ctx,
         path,
-        dryrun,
-        name,
-        maintainer,
-        email,
-        language,
-        version
+        config
    ):
     """Initializes a repository."""
     if path is None:
         path = ctx.home
 
+    config_data = load(config)
+    options = dict(
+        name=config_data.get('name', 'docker-sample'),
+        maintainer=config_data.get('maintainer', lambda: os.environ.get('USER', '')),
+    )
+
     ctx.log('Initialized docker setup in %s', click.format_filename(path))
-    ctx.log('Dryrun %s', dryrun)
-    ctx.log('Project name %s', name)
-    ctx.log('Maintainer %s', maintainer)
-    ctx.log('Email in %s', email)
-    ctx.log('Language %s', language)
-    ctx.log('Version %s', version)
+    ctx.log('Project name %s', config_data['name'])
+    ctx.log('Language %s', config_data['language'])
+    ctx.log('Maintainer %s', config_data['maintainer'])
 
-    language = language.lower();
-    if language == 'php':
-        generate_docker_file(path, name, language, version)
-    click.echo('Create ./Dockerfile')
+    if config_data['language'] == 'php':
+        generate_docker_file_php(path, options)
+    else:
+        click.echo('Language not found. Skip.')
 
+    click.echo('Done.')

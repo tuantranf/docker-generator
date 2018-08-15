@@ -1,35 +1,38 @@
 import os
+import shutil
+
 from jinja2 import Environment, FileSystemLoader
 
-TYPE_DOCKER_FILE = 1
+LANG_PHP = "php"
 
-def generate_docker_file(path,
-                  name,
-                  language,
-                  version):
+def generate_docker_file_php(path, options):
 
-    params = dict(
-        name=name,
-        language=language,
-        image='php7:0-jessie',
-        packages=['test', 'testdd']
-    )
+    generate_docker_file(LANG_PHP, path, options)
 
-    generate_file(TYPE_DOCKER_FILE, path, params)
+def generate_docker_file(language, path, params):
 
-def generate_file(type,
-                  path,
-                  params
-                  ):
+    template_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), './templates/', language))
 
-    template_folder = ''
-    output_path = ''
-    if type == TYPE_DOCKER_FILE:
-        template_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), './templates/docker_files'))
-        output_path = os.path.join(path, 'Dockerfile')
-
+    # Dockerfile
     jinja2_env = Environment(loader=FileSystemLoader(template_folder), trim_blocks=True)
-    content = jinja2_env.get_template(params['language']).render(params)
+    content = jinja2_env.get_template('Dockerfile-tpl').render(params)
 
-    with open(output_path, "w") as fh:
+    docker_file_path = os.path.join(path, 'Dockerfile')
+    with open(docker_file_path, "w") as fh:
         fh.write(content)
+
+    # copy docker ignore file
+    ignore_src_file = os.path.join(template_folder, '.dockerignore')
+    ignore_dst_file = os.path.join(path, '.dockerignore')
+    shutil.copy(ignore_src_file, ignore_dst_file)
+
+    # copy docker-data file
+    docker_data_path = os.path.join(path, 'docker-data')
+    if not os.path.exists(docker_data_path):
+        os.mkdir(docker_data_path)
+    vhost_src_file = os.path.join(template_folder, 'vhost.conf')
+    vhost_dst_file = os.path.join(path, 'docker-data', 'vhost.conf')
+    shutil.copy(vhost_src_file, vhost_dst_file)
+
+
+
